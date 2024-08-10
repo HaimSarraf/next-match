@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import LoginForm from "./LoginForm";
 
 const LoginPage = () => {
   return (
-    <div>LoginPage</div>
-  )
-}
+    <div className="flex items-center justify-center vertical-center">
+      <LoginForm />
+    </div>
+  );
+};
 
-export default LoginPage
+export default LoginPage;
