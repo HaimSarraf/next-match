@@ -8,7 +8,7 @@ export default async function Home() {
     <div className="flex flex-col gap-y-20">
       <div className="flex flex-col text-center">
         <h1 className="font-bold text-3xl text-gray-400 bg-yellow-50  p-2 w-full">
-          Messenger-Web-Application
+          Messenger-Web-App
         </h1>
         <p className="bg-yellow-100 rounded text-gray-300 text-sm">
           Presented by :{" "}
