@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 import { ActionResults } from "../types";
 import { User } from "@prisma/client";
 import { LoginSchema } from "@/lib/schemas/loginSchema";
-import { signIn, signOut } from "@/auth";
+import { auth, signIn, signOut } from "@/auth";
 import { AuthError } from "next-auth";
 
 export async function registerUser(
@@ -91,4 +91,13 @@ export async function signInUser(
 
 export async function SignOutUser() {
   await signOut({ redirectTo: "/" });
+}
+
+export async function getAuthUserId() {
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  if (!userId) throw new Error("User Not Authorized");
+
+  return userId;
 }
