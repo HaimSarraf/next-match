@@ -2,6 +2,7 @@
 
 import { registerUser } from "@/app/actions/authActions";
 import { RegisterSchema, registerSchema } from "@/lib/schemas/registerSchema";
+import { handleFormServerErrors } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Card, CardHeader, CardBody, Button, Input } from "@nextui-org/react";
 import React from "react";
@@ -13,7 +14,7 @@ const RegisterForm = () => {
     register,
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
-    setError
+    setError,
   } = useForm<RegisterSchema>({
     // resolver: zodResolver(registerSchema),
     mode: "onTouched",
@@ -25,14 +26,7 @@ const RegisterForm = () => {
     if (result.status === "success") {
       console.log("User Registered Successfully");
     } else {
-      if (Array.isArray(result.error)) {
-        result.error.forEach((e) => {
-          const fieldName = e.path.join(". ") as "email" | "name" | "password";
-          setError(fieldName, { message: e.message });
-        });
-      } else {
-        setError("root.serverError", { message: result.error });
-      }
+      handleFormServerErrors(result, setError);
     }
   };
 
@@ -98,7 +92,6 @@ const RegisterForm = () => {
 };
 
 export default RegisterForm;
-
 
 // function setError(fieldName: string, arg1: { message: string }) {
 //   throw new Error("Function not implemented.");
