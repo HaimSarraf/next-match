@@ -4,7 +4,11 @@ import { MessageDto } from "@/app/types";
 import React, { useEffect, useRef } from "react";
 import clsx from "clsx";
 import { Avatar } from "@nextui-org/react";
-import { transformImageUrl } from "@/lib/utils";
+import { timeAgo, transformImageUrl } from "@/lib/utils";
+import { BsEyeFill } from "react-icons/bs";
+import { GiSemiClosedEye } from "react-icons/gi";
+import { HiMiniEyeSlash } from "react-icons/hi2";
+import PresenceAvatar from "@/components/PresenceAvatar";
 
 type Props = {
   message: MessageDto;
@@ -23,16 +27,17 @@ export default function MessageBox({ currentUserId, message }: Props) {
   }, [messageEndRef]);
 
   const renderedAvatar = () => (
-    <Avatar
-      name={message.senderName}
-      className="self-end"
-      src={transformImageUrl(message.senderImage) || "/images/user.png"}
-    />
+    <div className="self-end">
+      <PresenceAvatar
+        src={transformImageUrl(message.senderImage) || "/images/user.png"}
+        userId={message.senderId}
+      />
+    </div>
   );
 
   const messageContentClasses = clsx("flex flex-col w-[50%] px-2 py-1", {
-    "rounded-l-xl rounded-tr-xl bg-yellow-300": !isCurrentUserSender,
-    "rounded-r-xl rounded-tl-xl border-gray-200  bg-orange-300":
+    "rounded-l-xl rounded-tr-xl bg-yellow-100": !isCurrentUserSender,
+    "rounded-r-xl rounded-tl-xl border-gray-200  bg-orange-100":
       isCurrentUserSender,
   });
 
@@ -43,10 +48,22 @@ export default function MessageBox({ currentUserId, message }: Props) {
         "justify-start": !isCurrentUserSender,
       })}
     >
-      {message.dateRead && message.recipientId !== currentUserId ? (
-        <span className="text-xs text-gray-400 text-italic">
-          (read 4 mins ago)
-        </span>
+      {message.recipientId !== currentUserId ? (
+        message.dateRead ? (
+          <span className="text-xs  text-gray-500 italic flex flex-row gap-1">
+            <p>
+              <BsEyeFill size={16} />
+            </p>
+            <p>{timeAgo(message.dateRead)}</p>
+          </span>
+        ) : (
+          <span className="bg-orange-50 rounded p-1 text-xs text-gray-500 flex flex-row gap-1">
+            <p>
+              <HiMiniEyeSlash size={16} />
+            </p>
+            <p>not read</p>
+          </span>
+        )
       ) : (
         <div></div>
       )}
@@ -72,7 +89,7 @@ export default function MessageBox({ currentUserId, message }: Props) {
   );
 
   return (
-    <div className="grid grid-rows-1 text-w">
+    <div className="grid grid-rows-1 text-wrap">
       <div
         className={clsx("flex gap-2 mb-3", {
           "justify-end text-right": !isCurrentUserSender,

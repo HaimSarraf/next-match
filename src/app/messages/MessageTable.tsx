@@ -1,10 +1,7 @@
 "use client";
 
 import {
-  Avatar,
-  Button,
   Card,
-  getKeyValue,
   Table,
   TableBody,
   TableCell,
@@ -12,101 +9,18 @@ import {
   TableHeader,
   TableRow,
 } from "@nextui-org/react";
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { Key, useCallback, useState } from "react";
+import React from "react";
 import { MessageDto } from "../types";
-import { AiFillDelete } from "react-icons/ai";
-import { deleteMessage } from "../actions/messageActions";
-import { truncateString } from "@/lib/utils";
+import MessageTableCell from "./MessageTableCell";
+import useMessages from "@/hooks/useMessages";
 
 type Props = {
-  messages: MessageDto[];
+  initialMessages: MessageDto[];
 };
 
-export default function MessageTable({ messages }: Props) {
-  const searchParams = useSearchParams();
-
-  const isOutbox = searchParams.get("container") === "outbox";
-
-  const router = useRouter();
-
-  const [isDeleting, setIsDeleting] = useState({ id: "", loading: false });
-
-  const columns = [
-    {
-      key: isOutbox ? "recipientName" : "senderName",
-      label: isOutbox ? "Recipient" : "Sender",
-    },
-    { key: "text", label: "Message" },
-    { key: "created", label: isOutbox ? "Date Sent" : "Date Recieved" },
-    { key: "actions", label: "Actions" },
-  ];
-
-  const handleDeleteMessage = useCallback(
-    async (message: MessageDto) => {
-      setIsDeleting({ id: message.id, loading: true });
-
-      await deleteMessage(message.id, isOutbox);
-
-      router.refresh();
-
-      setIsDeleting({ id: "", loading: false });
-    },
-    [isOutbox, router]
-  );
-
-  const handleRowSelect = (key: Key) => {
-    const message = messages.find((m) => m.id === key);
-
-    const url = isOutbox
-      ? `/members/${message?.recipientId}`
-      : `/members/${message?.senderId}`;
-
-    router.push(url + "/chat");
-  };
-
-  const renderCell = useCallback(
-    (item: MessageDto, columnKey: keyof MessageDto) => {
-      const cellValue = item[columnKey];
-
-      switch (columnKey) {
-        case "recipientName":
-        case "senderName":
-          return (
-            <div className="flex items-center gap-2 cursor-pointe">
-              <Avatar
-                alt="Image Of Member"
-                src={
-                  (isOutbox ? item.recipientImage : item.senderImage) ||
-                  "/images/user.png"
-                }
-              />
-
-              <span>{cellValue}</span>
-            </div>
-          );
-
-        case "text":
-          return <div>{truncateString(cellValue, 30)}</div>;
-
-        case "created":
-          return cellValue;
-
-        default:
-          return (
-            <Button
-              isIconOnly
-              variant="light"
-              onClick={() => handleDeleteMessage(item)}
-              isLoading={isDeleting.id === item.id && isDeleting.loading}
-            >
-              <AiFillDelete size={24} className="text-danger" />
-            </Button>
-          );
-      }
-    },
-    [isOutbox, isDeleting.id, isDeleting.loading, handleDeleteMessage]
-  );
+export default function MessageTable({ initialMessages }: Props) {
+  const { columns, deleteMessage, isDeleting, isOutbox, selectRow , messages } =
+    useMessages(initialMessages);
 
   return (
     <Card className="flex flex-col gap-3 h-[80vh] overflow-auto">
@@ -115,16 +29,17 @@ export default function MessageTable({ messages }: Props) {
         selectionMode="single"
         shadow="none"
         onRowAction={(key) => {
-          handleRowSelect(key);
+          selectRow(key);
         }}
       >
         <TableHeader columns={columns}>
           {(columns) => (
-            <TableColumn key={columns.key}
-              width={columns.key === 'text' ? '50%' : undefined }
+            <TableColumn
+              key={columns.key}
+              width={columns.key === "text" ? "50%" : undefined}
             >
               {columns.label}
-              </TableColumn>
+            </TableColumn>
           )}
         </TableHeader>
 
@@ -143,7 +58,13 @@ export default function MessageTable({ messages }: Props) {
             >
               {(columnKey) => (
                 <TableCell>
-                  {renderCell(item, columnKey as keyof MessageDto)}
+                  <MessageTableCell
+                    item={item}
+                    columnKey={columnKey as string}
+                    isOutbox={isOutbox}
+                    deleteMessage={deleteMessage}
+                    isDeleting={isDeleting.loading && isDeleting.id === item.id}
+                  />
                 </TableCell>
               )}
             </TableRow>
