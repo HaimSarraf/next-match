@@ -6,4 +6,10 @@
   .vertical-center {
     height: calc(100vh - 200px);
   }
+
+  .page-size-box {
+    @apply cursor-pointer border-2 hover:bg-gray-100
+    flex items-center w-9 h-9 text-sm
+    justify-center rounded-lg shadow-sm min-w-[36px];
+  }
 }

@@ -22,7 +22,7 @@ export default async function RootLayout({
       <body>
         <Providers userId={userId}>
           <TopNav />
-          <main className="container mx-auto">{children}</main>
+          <main className="container mx-auto px-1">{children}</main>
         </Providers>
       </body>
     </html>
