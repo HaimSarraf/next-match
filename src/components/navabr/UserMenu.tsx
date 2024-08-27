@@ -10,7 +10,6 @@ import {
   DropdownSection,
   DropdownTrigger,
 } from "@nextui-org/react";
-import { Session } from "next-auth";
 import Link from "next/link";
 import React from "react";
 

@@ -12,9 +12,10 @@ import "react-toastify/ReactToastify.css";
 interface Props {
   children: React.ReactNode;
   userId: string | null;
+  profileComplete:boolean
 }
 
-function Providers({ children, userId }: Props) {
+function Providers({ children, userId , profileComplete }: Props) {
   const isUnreadCountSet = useRef(false);
 
   const { updateUnreadCount } = useMessageStore((state) => ({
@@ -37,8 +38,8 @@ function Providers({ children, userId }: Props) {
     }
   }, [setUnreadCount, userId]);
 
-  usePresenceChannel();
-  useNotificationChannel(userId);
+  usePresenceChannel(userId, profileComplete);
+  useNotificationChannel(userId, profileComplete);
 
   return (
     <NextUIProvider>

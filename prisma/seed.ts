@@ -13,6 +13,7 @@ async function seedMembers() {
         name: member.name,
         passwordHash: await hash("password", 10),
         image: member.image,
+        profileComplete: true,
         member: {
           create: {
             dateOfBirth: new Date(member.dateOfBirth),
@@ -38,7 +39,6 @@ async function seedMembers() {
 
 async function main() {
   await seedMembers();
-  // await prisma.user.deleteMany()
 }
 
 main()
@@ -48,3 +48,5 @@ main()
     process.exit(1);
   })
   .finally(async () => await prisma.$disconnect());
+
+// type in terminal : npx prisma db seed

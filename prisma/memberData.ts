@@ -1,3 +1,5 @@
+import { image } from "@nextui-org/react";
+
 export const membersData = [
   {
     email: "lisa@test.com",
@@ -109,7 +111,7 @@ export const membersData = [
       "Aliquip labore nisi veniam exercitation sit laborum nisi pariatur dolore tempor irure. Ad officia et eu cupidatat qui irure pariatur qui excepteur dolor ut eiusmod. Exercitation qui cillum elit elit officia elit culpa eu consequat cupidatat velit esse.\r\n",
     city: "Clarence",
     country: "Burkina Faso",
-    image: "/images/m3.jpeg",
+    image:"/images/m3.jpeg"
   },
   {
     email: "skinner@test.com",
