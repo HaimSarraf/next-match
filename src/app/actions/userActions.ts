@@ -49,7 +49,6 @@ export async function updateMemberProfile(
     return { status: "error", error: error as string };
   }
 }
-
 export async function addImage(url: string, publicId: string) {
   try {
     const userId = await getAuthUserId();
@@ -72,8 +71,9 @@ export async function addImage(url: string, publicId: string) {
     throw err;
   }
 }
-
 export async function setMainImage(photo: Photo) {
+  if (!photo.isApproved)
+    throw new Error("Only Approved Photos Can Be Set To Main Image");
   try {
     const userId = await getAuthUserId();
 
@@ -91,7 +91,6 @@ export async function setMainImage(photo: Photo) {
     throw error;
   }
 }
-
 export async function getUserInfoForNav() {
   try {
     const userId = await getAuthUserId();
@@ -108,7 +107,6 @@ export async function getUserInfoForNav() {
     throw error;
   }
 }
-
 export async function deleteImage(photo: Photo) {
   try {
     const userId = await getAuthUserId();

@@ -299,3 +299,11 @@ export async function completeSocialLoginProfile(
     return { status: "error", error: "Something Went Wrong" };
   }
 }
+export async function getUserRole() {
+  const session = await auth();
+  const role = session?.user.role;
+
+  if (!role) throw new Error("No Role");
+
+  return role;
+}

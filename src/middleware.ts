@@ -10,9 +10,15 @@ export default auth((req) => {
   const isPublic = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
   const isProfileComplete = req.auth?.user.profileComplete;
+  const isAdmin = req.auth?.user.role === "ADMIN";
+  const isAdminRoute = nextUrl.pathname.startsWith("/admin");
 
-  if (isPublic) {
+  if (isPublic || isAdmin) {
     return NextResponse.next();
+  }
+
+  if (isAdminRoute && !isAdmin) {
+    return NextResponse.redirect(new URL("/", nextUrl));
   }
 
   if (isAuthRoute) {
@@ -26,13 +32,17 @@ export default auth((req) => {
     return NextResponse.redirect(new URL("/login", nextUrl));
   }
 
-  if(isLoggedIn && !isProfileComplete && nextUrl.pathname !== '/complete-profile'){
-    return NextResponse.redirect(new URL('/complete-profile', nextUrl));
+  if (
+    isLoggedIn &&
+    !isProfileComplete &&
+    nextUrl.pathname !== "/complete-profile"
+  ) {
+    return NextResponse.redirect(new URL("/complete-profile", nextUrl));
   }
 
   return NextResponse.next();
 });
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/((?!api|_next/static|_next/image|images|favicon.ico).*)"],
 };

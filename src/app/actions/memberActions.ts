@@ -70,7 +70,6 @@ export async function getMembers({
     throw error;
   }
 }
-
 export async function getMemberByUserId(userId: string) {
   try {
     return prisma.member.findUnique({ where: { userId } });
@@ -78,18 +77,22 @@ export async function getMemberByUserId(userId: string) {
     console.log(e);
   }
 }
-
 export async function getMemberPhotosByUserId(userId: string) {
+  const currentUserId = await getAuthUserId();
+
   const member = await prisma.member.findUnique({
     where: { userId },
-    select: { photos: true },
+    select: {
+      photos: {
+        where: currentUserId === userId ? {} : { isApproved: true },
+      },
+    },
   });
 
   if (!member) return null;
 
-  return member.photos.map((p) => p) as Photo[];
+  return member.photos as Photo[];
 }
-
 export async function updateLastActive() {
   const userId = await getAuthUserId();
 

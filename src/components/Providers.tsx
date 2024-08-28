@@ -5,6 +5,7 @@ import useMessageStore from "@/hooks/useMessageStore";
 import { useNotificationChannel } from "@/hooks/useNotificationChannel";
 import { usePresenceChannel } from "@/hooks/usePresenceChannel";
 import { NextUIProvider } from "@nextui-org/react";
+import { SessionProvider } from "next-auth/react";
 import { useCallback, useEffect, useRef } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
@@ -12,10 +13,10 @@ import "react-toastify/ReactToastify.css";
 interface Props {
   children: React.ReactNode;
   userId: string | null;
-  profileComplete:boolean
+  profileComplete: boolean;
 }
 
-function Providers({ children, userId , profileComplete }: Props) {
+function Providers({ children, userId, profileComplete }: Props) {
   const isUnreadCountSet = useRef(false);
 
   const { updateUnreadCount } = useMessageStore((state) => ({
@@ -42,15 +43,17 @@ function Providers({ children, userId , profileComplete }: Props) {
   useNotificationChannel(userId, profileComplete);
 
   return (
-    <NextUIProvider>
-      <ToastContainer
-        position="bottom-center"
-        hideProgressBar
-        className="z-50 text-center font-bold"
-      />
+    <SessionProvider>
+      <NextUIProvider>
+        <ToastContainer
+          position="bottom-center"
+          hideProgressBar
+          className="z-50 text-center font-bold"
+        />
 
-      {children}
-    </NextUIProvider>
+        {children}
+      </NextUIProvider>
+    </SessionProvider>
   );
 }
 
